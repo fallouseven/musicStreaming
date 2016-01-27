@@ -28,7 +28,7 @@ public class PlayStream extends JFrame{
 	  private Player mediaPlayer;
 	  private Player player;
 	  private File file;
-	  /*
+	  
 	   public PlayStream()
 	   {
 	      super( "Demonstrating the Java Media Player" );
@@ -101,7 +101,7 @@ public class PlayStream extends JFrame{
 	 
 	      if ( control != null ) 
 	         c.remove( control );
-	   }*/
+	   }
 	 
 	/**
 	 * @param args
@@ -110,7 +110,7 @@ public class PlayStream extends JFrame{
 		// TODO Auto-generated method stub
 		System.out.println("Bonjour! JE SUIS EN TRAIN DE TESTER");
 		System.out.println("Bonjour! Explore");
-	/*	PlayStream app = new PlayStream();
+		PlayStream app = new PlayStream();
 		 
 	      app.addWindowListener(
 	         new WindowAdapter() {
@@ -143,7 +143,7 @@ public class PlayStream extends JFrame{
 	 
 	            c.doLayout();
 	         }
-	      }*/
+	      }
 		/*final String songs_url[]={
 			    "http://soundcloud.com/qassim/brbjjajwsfcz"
 			};
