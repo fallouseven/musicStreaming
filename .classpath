@@ -7,6 +7,9 @@
 	<classpathentry kind="lib" path="C:/MarsWorkspace/ARCH_STREAM_SYSTEM/src/jmf-2.1.1e.jar/jmf-2.1.1e.jar"/>
 	<classpathentry kind="lib" path="C:/MarsWorkspace/ARCH_STREAM_SYSTEM/src/gmusic.api-master.zip"/>
 	<classpathentry kind="lib" path="C:/MarsWorkspace/ARCH_STREAM_SYSTEM/src/spotify-web-api-java-1.5.0.jar"/>
+	<classpathentry kind="lib" path="C:/MarsWorkspace/musicStreaming/src/spotify-web-api-java-1.5.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/MOHAMED/eclipse/eclipse-mars/eclipse/musicAPI/spotify-web-api-java-1.5.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/MOHAMED/eclipse/eclipse-mars/eclipse/musicAPI/soundcloud-java-library-master/library/SoundCloud.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
