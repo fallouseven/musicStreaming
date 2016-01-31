@@ -5,9 +5,26 @@ import com.soundcloud.api.ApiWrapper;
 import com.soundcloud.api.Request;
 import com.sun.media.Log;
 import com.sun.media.MediaPlayer;
+import com.sun.media.util.SettableTime;
 import com.wrapper.*;
+import com.wrapper.spotify.Api.*;
+import com.wrapper.spotify.Api.Builder;
+import com.wrapper.spotify.methods.AlbumRequest;
+import com.wrapper.spotify.methods.TrackRequest;
+import com.wrapper.spotify.models.Album;
+import com.wrapper.spotify.models.AuthorizationCodeCredentials;
 
+import com.google.common.util.concurrent.FutureCallback; 
+import com.google.common.util.concurrent.Futures; 
+import com.google.common.util.concurrent.SettableFuture; 
+import com.wrapper.spotify.Api; 
+import com.wrapper.spotify.models.AuthorizationCodeCredentials; 
+import static org.junit.Assert.*;
 
+import static junit.framework.TestCase.assertEquals; 
+import static junit.framework.TestCase.fail; 
+import java.util.*;
+import java.util.List;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -23,86 +40,55 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.media.*;
+import gmusic.api.impl.*;
+
 
 public class PlayStream extends JFrame{
-	  private Player mediaPlayer;
-	  private Player player;
-	  private File file;
-	  
-	   public PlayStream()
-	   {
-	      super( "Demonstrating the Java Media Player" );
-	 
-	      JButton openFile = new JButton( "Open file to play" );
-	      openFile.addActionListener(
-	         new ActionListener() {
-	            public void actionPerformed( ActionEvent e )
-	            {
-	               openFile();
-	               createPlayer();
-	            }
-	         }
-	      );
-	      getContentPane().add( openFile, BorderLayout.NORTH );
-	   
-	      setSize( 300, 300 );
-	      show();
-	   }
-	 
-	   private void openFile()
-	   {      
-	      JFileChooser fileChooser = new JFileChooser();
-	 
-	      fileChooser.setFileSelectionMode(
-	         JFileChooser.FILES_ONLY );
-	      int result = fileChooser.showOpenDialog( this );
-	 
-	      // user clicked Cancel button on dialog
-	      if ( result == JFileChooser.CANCEL_OPTION )
-	         file = null;
-	      else
-	         file = fileChooser.getSelectedFile();
-	   }
-	 
-	   private void createPlayer()
-	   {
-	      if ( file == null )
-	         return;
-	 
-	      removePreviousPlayer();
-	 
-	      try {
-	         // create a new player and add listener
-	         player = Manager.createPlayer( file.toURL() );
-	         player.addControllerListener( new EventHandler() );
-	         player.start();  // start player
-	      }
-	      catch ( Exception e ){
-	         JOptionPane.showMessageDialog( this,
-	            "Invalid file or location", "Error loading file",
-	            JOptionPane.ERROR_MESSAGE );
-	      }
-	   }
-	 
-	   private void removePreviousPlayer()
-	   {
-	      if ( player == null )
-	         return;
-	 
-	      player.close();
-	 
-	      Component visual = player.getVisualComponent();
-	      Component control = player.getControlPanelComponent();
-	 
-	      Container c = getContentPane();
-	      
-	      if ( visual != null ) 
-	         c.remove( visual );
-	 
-	      if ( control != null ) 
-	         c.remove( control );
-	   }
-	 
+	
+	//Connection
+	String client_id = "68a4bceb1bc64b53a0d344bf152ac006"; // My client id 
+	String client_secret = "d042d574650245829c55efd554c88670"; // My client secret 
+	String redirect_uri = "http://localhost:8888/callback/"; // My redirect uri 
+	String URL="";
+
+	private String connectUserName="soumrin";
+	private String connectPassWord="arrazzek";
+
+	String stateKey = "spotify_auth_state";
+	public PlayStream()
+	{
+		/* Builder spotify=new Builder();
+		   app.get("/login", function(req, res) {
+
+			   String state = generateRandomString(16);
+			   res.cookie(stateKey, state);
+
+			   // your application requests authorization
+			   String scope = "user-read-private user-read-email";
+			   res.redirect("https://accounts.spotify.com/authorize?" +
+			     querystring.stringify({
+			       response_type: 'code',
+			       client_id: client_id,
+			       scope: scope,
+			       redirect_uri: redirect_uri,
+			       state: state
+			   }));
+			 });*/
+	}
+	/*public void setAPI(){
+		  final String clientId="e61890b23e6d46eeb90fc9818cbe4c29";
+		  final String clientSecret="6929417ed59e4e6a91cdb02bea8222d1";
+		  final String redirectURI="http://localhost:9000/callback.html";
+		  final Api api=Api.builder().clientId(clientId).clientSecret(clientSecret).redirectURI(redirectURI).build();
+		}*/
+	/*public void shouldGetTrackResult_sync() throws Exception {
+		  final Api api=Api.DEFAULT_API;
+		  final TrackRequest request=api.getTrack("0eGsygTp906u18L0Oimnem").httpManager(TestUtil.MockedHttpManager.returningJson("track.json")).build();
+		  final Track track=(Track) request.get();
+		  assertNotNull(track);
+		  assertEquals("0eGsygTp906u18L0Oimnem",((com.wrapper.spotify.models.Track) track).getId());
+		}*/
+
 	/**
 	 * @param args
 	 */
@@ -110,120 +96,57 @@ public class PlayStream extends JFrame{
 		// TODO Auto-generated method stub
 		System.out.println("Bonjour! JE SUIS EN TRAIN DE TESTER");
 		System.out.println("Bonjour! Explore");
-		PlayStream app = new PlayStream();
-		 
-	      app.addWindowListener(
-	         new WindowAdapter() {
-	            public void windowClosing( WindowEvent e )
-	            {
-	               System.exit(0);
-	            }
-	         }
-	      );
-	   }
-	 
-	   // inner class to handler events from media player
-	   private class EventHandler implements ControllerListener {
-	      public void controllerUpdate( ControllerEvent e ) {
-	         if ( e instanceof RealizeCompleteEvent ) {
-	            Container c = getContentPane();
-	          
-	            // load Visual and Control components if they exist
-	            Component visualComponent =
-	               player.getVisualComponent();
-	 
-	            if ( visualComponent != null )
-	               c.add( visualComponent, BorderLayout.CENTER );
-	 
-	            Component controlsComponent =
-	               player.getControlPanelComponent();
-	 
-	            if ( controlsComponent != null )
-	               c.add( controlsComponent, BorderLayout.SOUTH );
-	 
-	            c.doLayout();
-	         }
-	      }
-		/*final String songs_url[]={
-			    "http://soundcloud.com/qassim/brbjjajwsfcz"
-			};
+		//final String clientId = "68a4bceb1bc64b53a0d344bf152ac006"; 
+		final String clientSecret = "d042d574650245829c55efd554c88670";
+		final String code = "GOOD";
+		final String redirectUri = "http://localhost:8888/callback/";
 
-			btn_play.setOnClickListener(new View.OnClickListener() {
+		Api api = Api.builder()
+				  .clientId("68a4bceb1bc64b53a0d344bf152ac006")
+				  .clientSecret("d042d574650245829c55efd554c88670")
+				  .redirectURI("http://localhost:8888/callback/")
+				  .build();
+	/*	final Api api = Api.builder().clientId(clientId).clientSecret(clientSecret).redirectURI(redirectUri).build(); 
 
-			    @Override
-			    public void onClick(View arg0) {
-			        try {
-			            mediaPlayer.setDataSource(songs_url[0]);
-			        } catch (IllegalArgumentException e) {
-			            // TODO Auto-generated catch block
-			            e.printStackTrace();
-			        } catch (SecurityException e) {
-			            // TODO Auto-generated catch block
-			            e.printStackTrace();
-			        } catch (IllegalStateException e) {
-			            // TODO Auto-generated catch block
-			            e.printStackTrace();
-			        } catch (IOException e) {
-			            // TODO Auto-generated catch block
-			            e.printStackTrace();
-			        }
-			        try {
-			            mediaPlayer.prepare();
-			        } catch (IllegalStateException e) {
-			            // TODO Auto-generated catch block
-			            e.printStackTrace();
-			        } catch (IOException e) {
-			            // TODO Auto-generated catch block
-			            e.printStackTrace();
-			        } // might take long! (for buffering, etc)
-			        mediaPlayer.start();
-			    }
-			});*/
-		 	/*String id = getResources().getString(R.string.sc_client_id);
-	        String secret = getResources().getString(R.string.sc_client_secret);
-	        ApiWrapper wrapper = new ApiWrapper(id,secret, null, null);
+		/* Make a token request. Asynchronous requests are made with the .getAsync method and synchronous requests 
+		 * are made with the .get method. This holds for all type of requests. */ 
+	/*	final SettableFuture<AuthorizationCodeCredentials> authorizationCodeCredentialsFuture = api.authorizationCodeGrant(code).build().getAsync();
 
-	        try {
-	            //Only needed for user-specific actions;
-	            //wrapper.login("<user>", "<pass>");
-	            //HttpResponse resp = wrapper.get(Request.to("/me"));
-	            //Get a track
-	            HttpResponse trackResp = wrapper.get(Request.to("/tracks/60913196"));
-	            //Track JSON response OK?
-	            if(trackResp.getStatusLine().getStatusCode() == HttpStatus.SC_OK)
-	            {
-	                JSONObject trackJSON = new JSONObject(EntityUtils.toString(trackResp.getEntity()));
-	                //If track is streamable, fetch the stream URL (mp3-https) and start the MediaPlayer
-	                if(trackJSON.getBoolean("streamable"))
-	                {
-	                    HttpResponse streamResp = wrapper.get(Request.to("/tracks/60913196/stream"));
-	                    JSONObject streamJSON = new JSONObject(EntityUtils.toString(streamResp.getEntity()));
-	                    String streamurl = streamJSON.getString("location");
-	                    Log.i("SoundCloud", trackJSON.getString("streamable"));
-	                    Log.i("SoundCloud", streamurl);
-	                    m_soundcloudPlayer.stop();
-	                    m_soundcloudPlayer = new MediaPlayer();
-	                    m_soundcloudPlayer.setDataSource(streamurl);
-	                    m_soundcloudPlayer.prepare();
-	                    m_soundcloudPlayer.start();
-	                }
+		/* Add callbacks to handle success and failure */ 
+	/*	Futures.addCallback(authorizationCodeCredentialsFuture, new FutureCallback<AuthorizationCodeCredentials>() { 
+			public void onSuccess(AuthorizationCodeCredentials authorizationCodeCredentials) { 
+				/* The tokens were retrieved successfully! */ 
+				//System.out.println("Successfully retrieved an access token! " + authorizationCodeCredentials.getAccessToken()); 
+				//System.out.println("The access token expires in " + authorizationCodeCredentials.getExpiresIn() + " seconds"); 
+				//System.out.println("Luckily, I can refresh it using this refresh token! " + authorizationCodeCredentials.getRefreshToken()); 
+			//} 
+/*
+			public void onFailure(Throwable throwable) { 
+				/* Let's say that the client id is invalid, or the code has been used more than once, 
+				 * the request will fail. Why it fails is written in the throwable's message. */ 
+				//fail(throwable.getMessage()); 
+			//} 
+			
+		//}); 
+		//
+		// Create an API instance. The default instance connects to https://api.spotify.com/.
+		//Api api = Api.DEFAULT_API; 
 
-	            }
-	        }
-	        catch (IOException e)
-	        {
-	            // TODO Auto-generated catch block
-	            e.printStackTrace();
-	        }catch (ParseException e)
-	        {
-	            // TODO Auto-generated catch block
-	            e.printStackTrace();
-	        }
-	        catch (JSONException e)
-	        {
-	            // TODO Auto-generated catch block
-	            e.printStackTrace();
-	        }*/
+		// Create a request object for the type of request you want to make
+		AlbumRequest request = api.getAlbum("7e0ij2fpWaxOEHv5fUYZjd").build();
+
+		// Retrieve an album
+		try {
+		  Album album = request.get();
+
+		  // Print the genres of the album
+		  List<String> genres = album.getGenres(); 
+		  for (String genre : genres) {
+		    System.out.println(genre);
+		  };
+
+		} catch (Exception e) {
+		  System.out.println("Could not get albums.");
+		}
 	}
-
 }
