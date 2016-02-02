@@ -1,152 +1,71 @@
 package SERVICES_STREAM;
 
-import com.google.gson.*;
-import com.soundcloud.api.ApiWrapper;
-import com.soundcloud.api.Request;
-import com.sun.media.Log;
-import com.sun.media.MediaPlayer;
-import com.sun.media.util.SettableTime;
-import com.wrapper.*;
-import com.wrapper.spotify.Api.*;
-import com.wrapper.spotify.Api.Builder;
-import com.wrapper.spotify.methods.AlbumRequest;
-import com.wrapper.spotify.methods.TrackRequest;
-import com.wrapper.spotify.models.Album;
-import com.wrapper.spotify.models.AuthorizationCodeCredentials;
-
-import com.google.common.util.concurrent.FutureCallback; 
-import com.google.common.util.concurrent.Futures; 
-import com.google.common.util.concurrent.SettableFuture; 
-import com.wrapper.spotify.Api; 
-import com.wrapper.spotify.models.AuthorizationCodeCredentials; 
-import static org.junit.Assert.*;
-
-import static junit.framework.TestCase.assertEquals; 
-import static junit.framework.TestCase.fail; 
-import java.util.*;
-import java.util.List;
-import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
-import java.text.ParseException;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.Window;
 
-import javax.swing.*;
-import javax.swing.text.View;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
+import STRATEGY_PATTERN.Gmusic;
+import STRATEGY_PATTERN.SoundCloudMusic;
+import STRATEGY_PATTERN.SpotifyMusic;
 
-import javax.media.*;
-import gmusic.api.impl.*;
+public class PlayStream extends javax.swing.JFrame{
 
-
-public class PlayStream extends JFrame{
-	
-	//Connection
-	String client_id = "68a4bceb1bc64b53a0d344bf152ac006"; // My client id 
-	String client_secret = "d042d574650245829c55efd554c88670"; // My client secret 
-	String redirect_uri = "http://localhost:8888/callback/"; // My redirect uri 
-	String URL="";
-
-	private String connectUserName="soumrin";
-	private String connectPassWord="arrazzek";
-
-	String stateKey = "spotify_auth_state";
 	public PlayStream()
 	{
-		/* Builder spotify=new Builder();
-		   app.get("/login", function(req, res) {
+		super("STREAMING SERVICE");
 
-			   String state = generateRandomString(16);
-			   res.cookie(stateKey, state);
-
-			   // your application requests authorization
-			   String scope = "user-read-private user-read-email";
-			   res.redirect("https://accounts.spotify.com/authorize?" +
-			     querystring.stringify({
-			       response_type: 'code',
-			       client_id: client_id,
-			       scope: scope,
-			       redirect_uri: redirect_uri,
-			       state: state
-			   }));
-			 });*/
-	}
-	/*public void setAPI(){
-		  final String clientId="e61890b23e6d46eeb90fc9818cbe4c29";
-		  final String clientSecret="6929417ed59e4e6a91cdb02bea8222d1";
-		  final String redirectURI="http://localhost:9000/callback.html";
-		  final Api api=Api.builder().clientId(clientId).clientSecret(clientSecret).redirectURI(redirectURI).build();
-		}*/
-	/*public void shouldGetTrackResult_sync() throws Exception {
-		  final Api api=Api.DEFAULT_API;
-		  final TrackRequest request=api.getTrack("0eGsygTp906u18L0Oimnem").httpManager(TestUtil.MockedHttpManager.returningJson("track.json")).build();
-		  final Track track=(Track) request.get();
-		  assertNotNull(track);
-		  assertEquals("0eGsygTp906u18L0Oimnem",((com.wrapper.spotify.models.Track) track).getId());
-		}*/
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		System.out.println("Bonjour! JE SUIS EN TRAIN DE TESTER");
-		System.out.println("Bonjour! Explore");
-		//final String clientId = "68a4bceb1bc64b53a0d344bf152ac006"; 
-		final String clientSecret = "d042d574650245829c55efd554c88670";
-		final String code = "GOOD";
-		final String redirectUri = "http://localhost:8888/callback/";
-
-		Api api = Api.builder()
-				  .clientId("68a4bceb1bc64b53a0d344bf152ac006")
-				  .clientSecret("d042d574650245829c55efd554c88670")
-				  .redirectURI("http://localhost:8888/callback/")
-				  .build();
-	/*	final Api api = Api.builder().clientId(clientId).clientSecret(clientSecret).redirectURI(redirectUri).build(); 
-
-		/* Make a token request. Asynchronous requests are made with the .getAsync method and synchronous requests 
-		 * are made with the .get method. This holds for all type of requests. */ 
-	/*	final SettableFuture<AuthorizationCodeCredentials> authorizationCodeCredentialsFuture = api.authorizationCodeGrant(code).build().getAsync();
-
-		/* Add callbacks to handle success and failure */ 
-	/*	Futures.addCallback(authorizationCodeCredentialsFuture, new FutureCallback<AuthorizationCodeCredentials>() { 
-			public void onSuccess(AuthorizationCodeCredentials authorizationCodeCredentials) { 
-				/* The tokens were retrieved successfully! */ 
-				//System.out.println("Successfully retrieved an access token! " + authorizationCodeCredentials.getAccessToken()); 
-				//System.out.println("The access token expires in " + authorizationCodeCredentials.getExpiresIn() + " seconds"); 
-				//System.out.println("Luckily, I can refresh it using this refresh token! " + authorizationCodeCredentials.getRefreshToken()); 
-			//} 
-/*
-			public void onFailure(Throwable throwable) { 
-				/* Let's say that the client id is invalid, or the code has been used more than once, 
-				 * the request will fail. Why it fails is written in the throwable's message. */ 
-				//fail(throwable.getMessage()); 
-			//} 
+		WindowListener l = new WindowAdapter() {
+			public void windowClosing(Window e){
+				System.exit(0);
+			}
 			
-		//}); 
-		//
-		// Create an API instance. The default instance connects to https://api.spotify.com/.
-		//Api api = Api.DEFAULT_API; 
-
-		// Create a request object for the type of request you want to make
-		AlbumRequest request = api.getAlbum("7e0ij2fpWaxOEHv5fUYZjd").build();
-
-		// Retrieve an album
-		try {
-		  Album album = request.get();
-
-		  // Print the genres of the album
-		  List<String> genres = album.getGenres(); 
-		  for (String genre : genres) {
-		    System.out.println(genre);
-		  };
-
-		} catch (Exception e) {
-		  System.out.println("Could not get albums.");
-		}
+		};
+				addWindowListener(l);
+				setSize(800,700);
+				setVisible(true);	
 	}
+			/**
+			 * @param args
+			 */
+
+			public static void main(String[] args) {
+				// TODO Auto-generated method stub
+
+				System.out.println("TEST STREAMING");
+				JFrame frame = new PlayStream();
+				JButton button = new JButton("EXIT");
+				//button.addActionListener(this); 
+				JLabel label = new JLabel("un petit texte");
+				JButton button2 = new JButton("PLAY");
+				JButton button3 = new JButton("SEARCH");
+				JButton button4 = new JButton("CREATE PLAYLIST");
+				JPanel pane = new JPanel();
+				//pane.setLayout(new GridLayout(3,2));
+				pane.add(button);
+				
+				pane.add(button2);
+				pane.add(button3);
+				pane.add(button4);
+				frame.getContentPane().add(pane, BorderLayout.CENTER);
+				pane.add(label);
+				
+				frame.show();
+
+				ContextStrategy context = new ContextStrategy(new SpotifyMusic());		
+				System.out.println("10 + 5 = " + context.executeStrategy(10, 5));
+				ContextStrategy product = new ContextStrategy(new Gmusic());
+				ContextStrategy substract = new ContextStrategy(new SoundCloudMusic());			
+				System.out.println("10 - 5 = " + product.executeStrategy(10, 5));
+
+
+				System.out.println("10 * 5 = " + substract.executeStrategy(10, 5));
+
+			}
 }
+

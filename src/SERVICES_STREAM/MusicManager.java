@@ -1,5 +1,5 @@
 package SERVICES_STREAM;
 
-public class MusicManager {
+public class MusicManager implements SystemCommonInterface{
 
 }
