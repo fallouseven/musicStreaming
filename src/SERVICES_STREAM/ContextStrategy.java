@@ -1,6 +1,9 @@
 package SERVICES_STREAM;
 
+import java.util.ArrayList;
+
 import STRATEGY_PATTERN.StreamingStrategy;
+
 
 public class ContextStrategy implements SystemCommonInterface{
 	
@@ -10,7 +13,16 @@ public class ContextStrategy implements SystemCommonInterface{
 		this.strategy = strategy;	
 	}
 
-	public int executeStrategy(int num1, int num2){
-		return strategy.doOperation(num1, num2);
+
+	@Override
+	public Music getMusic(int idTrack) {
+		// TODO Auto-generated method stub
+		return strategy.get(idTrack);
+	}
+
+	@Override
+	public ArrayList<Music> executeSearch(String sound) {
+		// TODO Auto-generated method stub
+		return strategy.search(sound);
 	}
 }

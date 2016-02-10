@@ -1,12 +1,10 @@
 package SERVICES_STREAM;
 
+import java.util.ArrayList;
+
 import STRATEGY_PATTERN.StreamingStrategy;
 
 public interface SystemCommonInterface {
-
-
-	public static void executeStrategy(int num1, int num2){
-	
-	}
-
+	public Music getMusic(int idTrack);
+	public ArrayList<Music> executeSearch(String sound);
 }
