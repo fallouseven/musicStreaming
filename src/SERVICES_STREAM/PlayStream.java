@@ -3,9 +3,11 @@ package SERVICES_STREAM;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Window;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -16,9 +18,11 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
 import org.json.JSONObject;
+import org.w3c.dom.Document;
 
 import STRATEGY_PATTERN.Gmusic;
 import STRATEGY_PATTERN.SoundCloudMusic;
@@ -55,29 +59,35 @@ public class PlayStream extends javax.swing.JFrame{
 				JLabel label = new JLabel("un petit texte");
 				JButton button2 = new JButton("PLAY");
 				button2.setToolTipText("Play Music");
-				JButton button3 = new JButton("SEARCH");
-				button3.setToolTipText("Search Music");
+				JButton buttonSearch = new JButton("SEARCH");
+				buttonSearch.setToolTipText("Search Music");
 				JButton button4 = new JButton("CREATE");
 				button4.setToolTipText("Create PLAYLIST");
-				JButton button5 = new JButton("ADD");
-				button5.setToolTipText("Add Music to PLAYLIST");
-				JButton button6 = new JButton("REMOVE");
-				button6.setToolTipText("Remove Music to PLAYLIST");
+				JButton buttonAdd = new JButton("ADD");
+				buttonAdd.setToolTipText("Add Music to PLAYLIST");
+				JButton buttonRemove = new JButton("REMOVE");
+				buttonRemove.setToolTipText("Remove Music to PLAYLIST");
 				JTextField textField = new JTextField(10);
 				JPanel pane = new JPanel();
 				//pane.setLayout(new GridLayout(1,2));
 				JPanel pane1 = new JPanel();
 				JPanel pane2 = new JPanel();
+				JPanel pane3 = new JPanel();
+				JPanel pane4 = new JPanel();
+				pane4.setLayout(new GridLayout(1,2));
 				pane.add(button);
-				pane.add(button5);
-				pane.add(button6);
+				pane.add(buttonAdd);
+				pane.add(buttonRemove);
 				pane.add(button2);
-				pane.add(button3);
+				pane.add(buttonSearch);
 				pane.add(button4);
 				pane.add(textField);
 				frame.getContentPane().add(pane, BorderLayout.NORTH);
-				frame.getContentPane().add(pane1, BorderLayout.WEST);
+				frame.getContentPane().add(pane4, BorderLayout.WEST);
 				frame.getContentPane().add(pane2, BorderLayout.CENTER);
+				//frame.getContentPane().add(pane3, BorderLayout.EAST);
+				pane4.add(pane1);
+				pane4.add(pane3);
 				pane.add(label);
 				
 				frame.show();
@@ -89,30 +99,62 @@ public class PlayStream extends javax.swing.JFrame{
                         };
 				String[] columnNames1 = {"Playlist"
                         };
+				String[] columnNames2 = {"Playlist selectionnée"
+                };
 				DefaultTableModel dtm1 = new DefaultTableModel(null, columnNames1);
-				JTable table1 = new JTable(dtm1);
+				JTable table1 = new JTable(dtm1){
+			        private static final long serialVersionUID = 1L;
+
+			        public boolean isCellEditable(int row, int column) {                
+			                return false;               
+			        };
+			    };
+				table1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION );
+				pane1.setBorder(BorderFactory.createEmptyBorder(10,20,10,20));
+				pane1.setLayout(new BorderLayout());
 				pane1.add(table1.getTableHeader(), BorderLayout.NORTH);
 				pane1.add(table1, BorderLayout.CENTER);
-				DefaultTableModel dtm2 = new DefaultTableModel(null, columnNames1);
-				JTable table2 = new JTable(dtm2);
-				pane1.add(table2, BorderLayout.EAST);
+				DefaultTableModel dtm2 = new DefaultTableModel(null, columnNames2);
+				JTable table2 = new JTable(dtm2){
+			        private static final long serialVersionUID = 1L;
+
+			        public boolean isCellEditable(int row, int column) {                
+			                return false;               
+			        };
+			    };
+				table2.setSelectionMode(ListSelectionModel.SINGLE_SELECTION );
+				pane3.setBorder(BorderFactory.createEmptyBorder(10,20,10,20));
+				pane3.setLayout(new BorderLayout());
+				pane3.add(table2.getTableHeader(), BorderLayout.NORTH);
+				pane3.add(table2, BorderLayout.CENTER);
 				DefaultTableModel dtm = new DefaultTableModel(null, columnNames);
-				JTable table = new JTable(dtm);
+				JTable table = new JTable(dtm){
+			        private static final long serialVersionUID = 1L;
+
+			        public boolean isCellEditable(int row, int column) {                
+			                return false;               
+			        };
+			    };
+				table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION );
+				search.parseDir("", dtm1);
 				
-				button3.addActionListener(new ActionListener(){
+				buttonSearch.addActionListener(new ActionListener(){
 
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						// TODO Auto-generated method stub
 						
-						
-						 
+						pane2.setBorder(BorderFactory.createEmptyBorder(10,20,10,20));
+						pane2.add(new JScrollPane(table));
+						pane2.setLayout(new BorderLayout());
 						pane2.add(table.getTableHeader(), BorderLayout.PAGE_START);
 						pane2.add(table, BorderLayout.CENTER);
 						dtm.setRowCount(0);
 						
 						ArrayList<Music> musi = search.search(textField.getText());
-						
+						if(musi.isEmpty()){
+							JOptionPane.showMessageDialog(null, "Cette musique n'existe pas!", "Information", JOptionPane.INFORMATION_MESSAGE);
+						}else{
 								for(Music sound : musi){
 									dtm.addRow(new Object[]{String.valueOf(sound.getName()),
 										String.valueOf(sound.getGenre()),
@@ -120,7 +162,7 @@ public class PlayStream extends javax.swing.JFrame{
 										String.valueOf(sound.getApi()),
 										Integer.valueOf(sound.getIdTrack())});
 								}
-						
+						}
 					}
 					
 				});
@@ -143,7 +185,8 @@ public class PlayStream extends javax.swing.JFrame{
 					}
 					
 				});
-				button5.addActionListener(new ActionListener(){
+				//click button add
+				buttonAdd.addActionListener(new ActionListener(){
 					
 					@Override
 					public void actionPerformed(ActionEvent e) {
@@ -161,18 +204,52 @@ public class PlayStream extends javax.swing.JFrame{
 											String.valueOf(dtm.getValueAt(keepValue.getRowSelected(), 2)), 
 													String.valueOf(dtm.getValueAt(keepValue.getRowSelected(), 3)),
 													Integer.parseInt(String.valueOf(dtm.getValueAt(keepValue.getRowSelected(), 4))));
-							JSONObject jo = new JSONObject();
-							search.createPlayList(music, jo);
-							search.updateFileJson(String.valueOf(dtm1.getValueAt(keepValue.getRowSelected1(), 0)), jo);
+							Document doc = search.createPlayList();
+							search.updateFileJson(music,String.valueOf(dtm1.getValueAt(keepValue.getRowSelected1(), 0)), doc);
 						dtm2.addRow(new Object[]{String.valueOf(dtm.getValueAt(keepValue.getRowSelected(), 0).toString())
 						});
 						}
 						if(keepValue.getRowSelected() == -1 && keepValue.getRowSelected1() == -1){
-							JOptionPane.showMessageDialog(null, "Please Select a playList and a sound!", "InfoBox: Select", JOptionPane.INFORMATION_MESSAGE);
+							JOptionPane.showMessageDialog(null, "Veuillez selectionner une play liste!", "Attention", JOptionPane.INFORMATION_MESSAGE);
 						}else if(keepValue.getRowSelected1() == -1){
-							JOptionPane.showMessageDialog(null, "Please Select a playList!", "InfoBox: Select", JOptionPane.INFORMATION_MESSAGE);
+							JOptionPane.showMessageDialog(null, "Veuillez selectionner une play liste!", "Attention", JOptionPane.INFORMATION_MESSAGE);
 						}else if(keepValue.getRowSelected() == -1){
-							JOptionPane.showMessageDialog(null, "Please Select a sound!", "InfoBox: Select", JOptionPane.INFORMATION_MESSAGE);
+							JOptionPane.showMessageDialog(null, "Veuillez selectionner une musique!", "Attention", JOptionPane.INFORMATION_MESSAGE);
+						}
+					}
+					
+				});
+				//click buttonRemove
+				buttonRemove.addActionListener(new ActionListener(){
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						Object[] options = {"Oui",
+	                    "Non"};
+						// TODO Auto-generated method stub
+						if(keepValue.getRowSelected2() != -1 && keepValue.getRowSelected1() != -1){
+							int dialogResult = JOptionPane.showOptionDialog (null, "Voulez vous supprimer la musique?","Suppression",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,
+								    null,     //do not use a custom Icon
+								    options,  //the titles of buttons
+								    options[0]);
+							if(dialogResult == JOptionPane.YES_OPTION){
+							search.removePlayList(String.valueOf(dtm1.getValueAt(keepValue.getRowSelected1(), 0)),String.valueOf(dtm2.getValueAt(keepValue.getRowSelected2(), 0)));
+							dtm2.removeRow(keepValue.getRowSelected2());
+							}
+						}else if(keepValue.getRowSelected1() != -1){
+							int dialogResult = JOptionPane.showOptionDialog (null, "Voulez vous supprimer la play liste?","Suppression",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,
+								    null,     //do not use a custom Icon
+								    options,  //the titles of buttons
+								    options[0]);
+							if(dialogResult == JOptionPane.YES_OPTION){
+							search.removePlayList(String.valueOf(dtm1.getValueAt(keepValue.getRowSelected1(), 0)),"");
+							dtm2.setRowCount(0);
+							dtm1.removeRow(keepValue.getRowSelected1());
+							}
+						}else if(keepValue.getRowSelected1() == -1 && keepValue.getRowSelected2() == -1){
+							JOptionPane.showMessageDialog(null, "Veuillez selectionner une play liste!", "Attention", JOptionPane.INFORMATION_MESSAGE);
+						}else if(keepValue.getRowSelected2() == -1){
+							JOptionPane.showMessageDialog(null, "Veuillez selectionner une musique!", "Attention", JOptionPane.INFORMATION_MESSAGE);
 						}
 					}
 					
@@ -185,7 +262,9 @@ public class PlayStream extends javax.swing.JFrame{
 					      keepValue.setRowSelected1(target.getSelectedRow());
 					      int column = target.getSelectedColumn();
 					      // do some action if appropriate column
-					      System.out.println(dtm1.getValueAt(keepValue.getRowSelected1(), 0).toString());
+					      String nameFile = dtm1.getValueAt(keepValue.getRowSelected1(), 0).toString();
+					      search.parseFile(nameFile, dtm2);
+					      
 					    }
 					  }
 					});
@@ -194,8 +273,7 @@ public class PlayStream extends javax.swing.JFrame{
 					    if (e.getClickCount() == 1) {
 					      JTable target = (JTable)e.getSource();
 					      keepValue.setRowSelected2(target.getSelectedRow());
-					      int column = target.getSelectedColumn();
-					      // do some action if appropriate column
+					      //int column = target.getSelectedColumn();
 					      
 					    }
 					  }
@@ -206,9 +284,7 @@ public class PlayStream extends javax.swing.JFrame{
 					    if (e.getClickCount() == 1) {
 					      JTable target = (JTable)e.getSource();
 					      keepValue.setRowSelected(target.getSelectedRow());
-					      int column = target.getSelectedColumn();
-					      // do some action if appropriate column
-					      System.out.println(dtm.getValueAt(keepValue.getRowSelected(), 0).toString());
+					      //int column = target.getSelectedColumn();
 					    }
 					  }
 					});
