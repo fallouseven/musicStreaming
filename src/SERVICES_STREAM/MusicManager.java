@@ -46,6 +46,7 @@ public class MusicManager{
 	public ArrayList<Music> search(String  sound){
 		ArrayList<Music> music = new ArrayList<Music>();
 		ContextStrategy contextSoundCloud = new ContextStrategy(new SoundCloudMusic());
+		
 		music = contextSoundCloud.executeSearch(sound);
 		//ContextStrategy contextSpotify = new ContextStrategy(new SpotifyMusic());
 		//music.addAll(contextSpotify.executeSearch(sound));
@@ -140,7 +141,7 @@ public class MusicManager{
 			if (br.readLine() == null) {
 				this.createPlayList(music, doc);
 				saveInFile(nameFile,doc);
-			    System.out.println("No errors, and file empty");
+			   
 			}else{
 				DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 				DocumentBuilder documentBuilder;
@@ -210,14 +211,14 @@ public class MusicManager{
 					}else{
 					Document document = documentBuilder.parse(new File(workingDir+"/Files/"+nameFile+".xml"));
 					NodeList list = document.getElementsByTagName("music");
-					System.out.println(list.getLength());
+					
 					for(int i = 0; i < list.getLength(); i++){
 			        if (list.item(i) != null) {
 			            NodeList subList = list.item(i).getChildNodes();
 			            if (subList != null && subList.getLength() > 0) {
 			            	dtm.addRow(new Object[]{subList.item(0).getTextContent()
 							});
-			            	System.out.println(subList.item(0).getTextContent());
+			            	
 			            }
 			        }
 					}
@@ -248,11 +249,11 @@ public class MusicManager{
 	        	if (i > 0) {
 	        	    extension = fileEntry.getName().substring(i+1);
 	        	}
-	        	System.out.println(extension);
+
 	        	if(extension.equals("xml"))
 	        		dtm.addRow(new Object[]{fileEntry.getName().substring(0,i)
 	        		});
-	            System.out.println(fileEntry.getName());
+	           
 	        }
 	    }
 	}
@@ -280,11 +281,11 @@ public class MusicManager{
 			            if (subList != null && subList.getLength() > 0) {
 			            	if(subList.item(0).getTextContent().equals(nameFile))
 			            		find = true;
-			            	System.out.println(subList.item(0).getTextContent());
+			            	
 			            }
 			        }
 					}
-					System.out.println(list.item(i-1).getFirstChild().getTextContent());
+					
 					list.item(i-1).getParentNode().removeChild(list.item(i-1));
 					this.saveInFile(nameList, document);
 				} catch (SAXException e) {

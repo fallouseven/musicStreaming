@@ -4,6 +4,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Window;
 
@@ -19,6 +20,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneLayout;
 import javax.swing.table.DefaultTableModel;
 
 import org.json.JSONObject;
@@ -54,15 +56,15 @@ public class PlayStream extends javax.swing.JFrame{
 				MusicManager search = new MusicManager();
 				System.out.println("TEST STREAMING");
 				JFrame frame = new PlayStream();
-				JButton button = new JButton("EXIT");
+				JButton buttonExit = new JButton("EXIT");
 				//button.addActionListener(this); 
 				JLabel label = new JLabel("un petit texte");
 				JButton button2 = new JButton("PLAY");
 				button2.setToolTipText("Play Music");
 				JButton buttonSearch = new JButton("SEARCH");
 				buttonSearch.setToolTipText("Search Music");
-				JButton button4 = new JButton("CREATE");
-				button4.setToolTipText("Create PLAYLIST");
+				JButton buttonCreate = new JButton("CREATE");
+				buttonCreate.setToolTipText("Create PLAYLIST");
 				JButton buttonAdd = new JButton("ADD");
 				buttonAdd.setToolTipText("Add Music to PLAYLIST");
 				JButton buttonRemove = new JButton("REMOVE");
@@ -74,13 +76,13 @@ public class PlayStream extends javax.swing.JFrame{
 				JPanel pane2 = new JPanel();
 				JPanel pane3 = new JPanel();
 				JPanel pane4 = new JPanel();
-				pane4.setLayout(new GridLayout(1,2));
-				pane.add(button);
+				pane4.setLayout(new FlowLayout());
+				pane.add(buttonExit);
 				pane.add(buttonAdd);
 				pane.add(buttonRemove);
 				pane.add(button2);
 				pane.add(buttonSearch);
-				pane.add(button4);
+				pane.add(buttonCreate);
 				pane.add(textField);
 				frame.getContentPane().add(pane, BorderLayout.NORTH);
 				frame.getContentPane().add(pane4, BorderLayout.WEST);
@@ -88,6 +90,7 @@ public class PlayStream extends javax.swing.JFrame{
 				//frame.getContentPane().add(pane3, BorderLayout.EAST);
 				pane4.add(pane1);
 				pane4.add(pane3);
+				
 				pane.add(label);
 				
 				frame.show();
@@ -110,10 +113,12 @@ public class PlayStream extends javax.swing.JFrame{
 			        };
 			    };
 				table1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION );
-				pane1.setBorder(BorderFactory.createEmptyBorder(10,20,10,20));
-				pane1.setLayout(new BorderLayout());
-				pane1.add(table1.getTableHeader(), BorderLayout.NORTH);
-				pane1.add(table1, BorderLayout.CENTER);
+				pane1.setBorder(BorderFactory.createEmptyBorder(10,3,10,2));
+				
+				JScrollPane  scrollPane1  = new JScrollPane(table1);
+				
+				scrollPane1.setPreferredSize(new Dimension(100,400));
+				pane1.add(scrollPane1);
 				DefaultTableModel dtm2 = new DefaultTableModel(null, columnNames2);
 				JTable table2 = new JTable(dtm2){
 			        private static final long serialVersionUID = 1L;
@@ -123,10 +128,11 @@ public class PlayStream extends javax.swing.JFrame{
 			        };
 			    };
 				table2.setSelectionMode(ListSelectionModel.SINGLE_SELECTION );
-				pane3.setBorder(BorderFactory.createEmptyBorder(10,20,10,20));
-				pane3.setLayout(new BorderLayout());
-				pane3.add(table2.getTableHeader(), BorderLayout.NORTH);
-				pane3.add(table2, BorderLayout.CENTER);
+				pane3.setBorder(BorderFactory.createEmptyBorder(10,2,10,2));
+				JScrollPane  scrollPane3  = new JScrollPane(table2);
+				
+				scrollPane3.setPreferredSize(new Dimension(150,400));
+				pane3.add(scrollPane3);
 				DefaultTableModel dtm = new DefaultTableModel(null, columnNames);
 				JTable table = new JTable(dtm){
 			        private static final long serialVersionUID = 1L;
@@ -136,19 +142,18 @@ public class PlayStream extends javax.swing.JFrame{
 			        };
 			    };
 				table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION );
+				JScrollPane  scrollPane  = new JScrollPane(table);
 				search.parseDir("", dtm1);
-				
+				pane2.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+				pane2.add(scrollPane);
 				buttonSearch.addActionListener(new ActionListener(){
 
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						// TODO Auto-generated method stub
 						
-						pane2.setBorder(BorderFactory.createEmptyBorder(10,20,10,20));
-						pane2.add(new JScrollPane(table));
-						pane2.setLayout(new BorderLayout());
-						pane2.add(table.getTableHeader(), BorderLayout.PAGE_START);
-						pane2.add(table, BorderLayout.CENTER);
+						
+						
 						dtm.setRowCount(0);
 						
 						ArrayList<Music> musi = search.search(textField.getText());
@@ -166,14 +171,24 @@ public class PlayStream extends javax.swing.JFrame{
 					}
 					
 				});
-				button4.addActionListener(new ActionListener(){
+				buttonExit.addActionListener(new ActionListener(){
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						// TODO Auto-generated method stub
+						System.exit(0);
+					}
+					
+				});
+				// click to search
+				buttonCreate.addActionListener(new ActionListener(){
 					
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						// TODO Auto-generated method stub
 						boolean notinsert = false;
 						for(int i=0;i<dtm1.getRowCount();i++){
-							System.out.println(dtm1.getValueAt(i, 0).toString());
+							
 							if((textField.getText().toLowerCase()).equals(dtm1.getValueAt(i, 0).toString()))
 								notinsert = true;
 						}
@@ -191,10 +206,10 @@ public class PlayStream extends javax.swing.JFrame{
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						// TODO Auto-generated method stub
-						System.out.println("rowSelected :"+keepValue.getRowSelected1());
+						
 						boolean notinsert = false;
 						for(int i=0;i<dtm2.getRowCount();i++){
-							System.out.println(dtm2.getValueAt(i, 0).toString());
+							
 							if((textField.getText().toLowerCase()).equals(dtm2.getValueAt(i, 0).toString()))
 								notinsert = true;
 						}

@@ -12,8 +12,7 @@ public class ContextStrategy implements SystemCommonInterface{
 	public ContextStrategy(StreamingStrategy strategy){
 		this.strategy = strategy;	
 	}
-
-
+	
 	@Override
 	public Music getMusic(int idTrack) {
 		// TODO Auto-generated method stub
